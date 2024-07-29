@@ -1,15 +1,17 @@
-import Hero from '../../components/Hero'
+import Hero from '../../components/Hero';
 import { FiMapPin } from "react-icons/fi";
 import { LuCalendarDays } from "react-icons/lu";
 import { FaRegClock } from "react-icons/fa";
 import classNames from "classnames";
 import Slider from "@mui/material/Slider";
 import { useRef, useState, useEffect } from "react";
-import styles from './Home.module.scss'
+import { useNavigate } from 'react-router-dom';
+import styles from './Home.module.scss';
 import TimeSelector from '../../components/timeSelector/TimeSelector';
 import BatchSelector from '../../components/batchSelector/BatchSelector';
 import SheduleManager from '../../components/sheduleManager/SheduleManager';
 import { SlPeople } from "react-icons/sl";
+
 const facilitiesOptions = [
   "AC",
   "Computers",
@@ -17,23 +19,20 @@ const facilitiesOptions = [
   "Electronic Equipment",
 ];
 
-
 const Home = () => {
-
-  //states to open and close the menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSpaceSelector, setIsSpaceSelector] = useState(false);
   const [isDaySelector, setIsDaySelector] = useState(false);
   const [isTimeSelector, setIsTimeSelector] = useState(false);
-  const [isBatchSelector , setIsBatchSelector] = useState(false) 
+  const [isBatchSelector , setIsBatchSelector] = useState(false);
   const menuRef = useRef();
+  const navigate = useNavigate();
 
-  //close menu when clicked outside
   useEffect(() => {
     let handler = (e) => {
       if (
         e.target.id !== "actionBtn" &&
-        !menuRef.current.contains(e.target) //if the click is on the modal
+        !menuRef.current.contains(e.target)
       ) {
         setIsMenuOpen(false);
       }
@@ -43,22 +42,12 @@ const Home = () => {
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  });
+  }, []);
 
-
-  //action parameters
-
-  // Initialize selectedDays state with array of indices //DaySelector
   const [selectedDays, setSelectedDays] = useState([1, 2, 3, 4, 5]);
-
-  //batch select
   const [selectedBatches, setSelectedBatches] = useState([]);
-
-  //TimeSelector
-  const [startTime, setStartTime] = useState(8); // State for startTime
-  const [endTime, setEndTime] = useState(17); // State for endTime
-
-  //SpaceSelector
+  const [startTime, setStartTime] = useState(8);
+  const [endTime, setEndTime] = useState(17);
   const [capacity, setCapacity] = useState([0, 100]);
   const [selectedFacilities, setSelectedFacilities] = useState([]);
 
@@ -69,9 +58,8 @@ const Home = () => {
         title="Your Event Ally"
         description="Check Availability and Reserve Spaces"
       >
-
-      <div className={styles.actionBar}>
-      <button
+        <div className={styles.actionBar}>
+          <button
             className={styles.actionBtn}
             onClick={() => {
               setIsMenuOpen(true);
@@ -85,12 +73,10 @@ const Home = () => {
             <FiMapPin />
             Select Space
           </button>
-
           <button
             className={styles.actionBtn}
             onClick={() => {
               setIsMenuOpen(true);
-
               setIsSpaceSelector(false);
               setIsDaySelector(true);
               setIsBatchSelector(false);
@@ -101,12 +87,10 @@ const Home = () => {
             <LuCalendarDays />
             Select Days
           </button>
-
           <button
             className={styles.actionBtn}
             onClick={() => {
               setIsMenuOpen(true);
-
               setIsSpaceSelector(false);
               setIsDaySelector(false);
               setIsBatchSelector(true)
@@ -115,13 +99,8 @@ const Home = () => {
             id="actionBtn"
           >
             <SlPeople />
-            Select Occation
+            Select Occasion
           </button>
-
-
-
-
-
           <button
             className={styles.actionBtn}
             onClick={() => {
@@ -136,15 +115,20 @@ const Home = () => {
             <FaRegClock />
             Select Time
           </button>
-
-      </div>
+          <button
+            className={styles.actionBtn}
+            id="actionBtn"
+            style={{ backgroundColor: '#1E90FF' }}
+            onClick={() => navigate('/booking')}
+          >
+            Continue
+          </button>
+        </div>
       </Hero>
-
       <div
         className={classNames(styles.menu, isMenuOpen && styles.active)}
         ref={menuRef}
       >
-
         {isSpaceSelector && (
           <SpaceSelector
             capacity={capacity}
@@ -153,23 +137,18 @@ const Home = () => {
             setSelectedFacilities={setSelectedFacilities}
           />
         )}
-
         {isDaySelector && (
           <DaySelector
             selectedDays={selectedDays}
             setSelectedDays={setSelectedDays}
           />
         )}
-
-        {
-          isBatchSelector && (
-            <BatchSelector
-              selectedBatches={selectedBatches}
-              setSelectedBatches={setSelectedBatches}
-            />
-          )
-        }
-
+        {isBatchSelector && (
+          <BatchSelector
+            selectedBatches={selectedBatches}
+            setSelectedBatches={setSelectedBatches}
+          />
+        )}
         {isTimeSelector && (
           <TimeSelector
             startTime={startTime}
@@ -178,11 +157,7 @@ const Home = () => {
             setEndTime={setEndTime}
           />
         )}
-
-
       </div>
-
-      
       <SheduleManager
         selectedDays={selectedDays}
         startTime={startTime}
@@ -191,10 +166,6 @@ const Home = () => {
         selectedFacilities={selectedFacilities}
         selectedBatches={selectedBatches}
       />
-
-
-
-    
     </div>
   )
 }
@@ -210,15 +181,12 @@ const DaySelector = ({ selectedDays, setSelectedDays }) => {
     "Saturday",
   ];
 
-  // Handle checkbox change event
   const handleCheckboxChange = (event) => {
     const index = parseInt(event.target.value);
 
     if (selectedDays.includes(index)) {
-      // If index is already in selectedDays, remove it
       setSelectedDays(selectedDays.filter((day) => day !== index));
     } else {
-      // Otherwise, add index to selectedDays
       setSelectedDays([...selectedDays, index]);
     }
   };
@@ -227,18 +195,16 @@ const DaySelector = ({ selectedDays, setSelectedDays }) => {
     <div className={styles.options}>
       <div className={styles.optionLabel}>Days</div>
       <div className={classNames(styles.optionContent, styles.checkboxes)}>
-
         {dayOptions.map((day, index) => (
           <div key={index} className={styles.checkboxWrapper}>
             <input
               type="checkbox"
-              value={index} // Use index as checkbox value
+              value={index}
               id={day}
-              checked={selectedDays.includes(index)} // Check if index is in selectedDays
+              checked={selectedDays.includes(index)}
               onChange={handleCheckboxChange}
             />
-            <label htmlFor={day}>{day}</label>{" "}
-            {/* Use htmlFor instead of for */}
+            <label htmlFor={day}>{day}</label>
           </div>
         ))}
       </div>
@@ -301,8 +267,7 @@ const SpaceSelector = ({
                 checked={selectedFacilities.includes(facility)}
                 onChange={handleCheckboxChange}
               />
-
-              <label for={facility}>{facility}</label>
+              <label htmlFor={facility}>{facility}</label>
             </div>
           ))}
         </div>
@@ -311,4 +276,4 @@ const SpaceSelector = ({
   );
 };
 
-export default Home
+export default Home;

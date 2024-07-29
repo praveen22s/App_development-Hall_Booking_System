@@ -13,6 +13,7 @@ const App = () => {
       <Navbar user={user}/>
       <AppRouter/>
       <Footer/>
+   
     </>
    
   )
